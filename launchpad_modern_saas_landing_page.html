@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Launchpad - Ship your SaaS faster than ever</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f5ff',
+                            100: '#e0ebff',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .glow-effect {
+            box-shadow: 0 0 50px -12px rgba(59, 130, 246, 0.35);
+        }
+        .dark .glow-effect-dark {
+            box-shadow: 0 0 50px -10px rgba(99, 102, 241, 0.25);
+        }
+        .toast-slide {
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 antialiased selection:bg-blue-500 selection:text-white">
+
+    <!-- Toast Notification for Form Actions -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 toast-slide bg-slate-900 text-white dark:bg-white dark:text-slate-900 px-5 py-3.5 rounded-xl shadow-2xl flex items-center gap-3 border border-slate-700 dark:border-slate-200">
+        <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400 dark:text-emerald-600 text-lg"></i>
+        <span id="toast-message" class="text-sm font-medium">Successfully subscribed!</span>
+    </div>
+
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-40 w-full backdrop-blur-md bg-white/80 dark:bg-slate-950/80 border-b border-slate-200/80 dark:border-slate-800/80 transition-colors">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="#" class="flex items-center gap-2.5 font-bold text-xl tracking-tight">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
+                    <i class="fa-solid fa-rocket text-base"></i>
+                </div>
+                <span class="bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-slate-800 to-slate-600 dark:from-white dark:via-slate-100 dark:to-slate-400">Launchpad</span>
+            </a>
+
+            <!-- Desktop Navigation Links -->
+            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600 dark:text-slate-300">
+                <a href="#features" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Features</a>
+                <a href="#demo" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Product Demo</a>
+                <a href="#pricing" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Pricing</a>
+                <a href="#faq" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">FAQ</a>
+            </nav>
+
+            <!-- Header Right Actions -->
+            <div class="flex items-center gap-3 sm:gap-4">
+                <!-- Theme Toggle Button -->
+                <button id="theme-toggle" aria-label="Toggle dark mode" class="p-2.5 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 transition-all">
+                    <i id="theme-toggle-dark-icon" class="fa-solid fa-moon text-sm hidden"></i>
+                    <i id="theme-toggle-light-icon" class="fa-solid fa-sun text-sm hidden"></i>
+                </button>
+
+                <!-- CTA Button -->
+                <a href="#signup" class="hidden sm:inline-flex items-center justify-center px-4 py-2 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 transition-all shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30">
+                    Get Started
+                </a>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" aria-label="Open navigation menu" class="md:hidden p-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-900">
+                    <i class="fa-solid fa-bars text-lg"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Drawer -->
+        <div id="mobile-menu" class="hidden md:hidden border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-4 pt-2 pb-6 space-y-3">
+            <a href="#features" class="block py-2 text-base font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600">Features</a>
+            <a href="#demo" class="block py-2 text-base font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600">Product Demo</a>
+            <a href="#pricing" class="block py-2 text-base font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600">Pricing</a>
+            <a href="#faq" class="block py-2 text-base font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600">FAQ</a>
+            <a href="#signup" class="block w-full text-center py-2.5 rounded-xl font-semibold text-white bg-blue-600 hover:bg-blue-700 mt-4">
+                Get Started Free
+            </a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative pt-12 pb-20 md:pt-20 md:pb-28 overflow-hidden">
+        <!-- Background Ambient Glow -->
+        <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-gradient-to-tr from-blue-500/20 to-purple-500/20 blur-[120px] rounded-full pointer-events-none -z-10"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <!-- Announcement Pill -->
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-medium bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/60 mb-6 hover:scale-[1.02] transition-transform cursor-pointer">
+                <span class="flex h-2 w-2 rounded-full bg-blue-600 animate-pulse"></span>
+                <span>Launchpad v2.0 is live!</span>
+                <i class="fa-solid fa-arrow-right text-xs opacity-70"></i>
+            </div>
+
+            <!-- Hero Headline -->
+            <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight max-w-4xl mx-auto leading-[1.15] text-slate-900 dark:text-white">
+                Launch your next SaaS in <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600">days, not months</span>
+            </h1>
+
+            <!-- Subheadline -->
+            <p class="mt-6 text-lg sm:text-xl text-slate-600 dark:text-slate-300 max-w-2xl mx-auto font-normal leading-relaxed">
+                The modern developer suite equipped with authentication, subscription billing, analytics, and pre-built components so you can focus on building what matters.
+            </p>
+
+            <!-- Hero Email Signup Form -->
+            <div id="signup" class="mt-8 max-w-md mx-auto">
+                <form id="hero-email-form" class="flex flex-col sm:flex-row gap-2.5 p-1.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none">
+                    <div class="relative flex-1 flex items-center">
+                        <i class="fa-regular fa-envelope absolute left-4 text-slate-400 text-sm"></i>
+                        <input type="email" required placeholder="Enter your work email..." class="w-full pl-10 pr-4 py-3 bg-transparent text-sm text-slate-900 dark:text-white placeholder-slate-400 outline-none rounded-xl">
+                    </div>
+                    <button type="submit" class="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold text-sm transition-all shadow-md shadow-blue-500/25 flex items-center justify-center gap-2">
+                        <span>Get Started</span>
+                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </button>
+                </form>
+                <div class="mt-3 flex items-center justify-center gap-4 text-xs text-slate-500 dark:text-slate-400">
+                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-check text-emerald-500"></i> No credit card needed</span>
+                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-check text-emerald-500"></i> 14-day free trial</span>
+                </div>
+            </div>
+
+            <!-- Hero Interactive Dashboard Graphic Preview -->
+            <div class="mt-14 relative max-w-5xl mx-auto rounded-2xl p-2 bg-slate-200/60 dark:bg-slate-800/40 border border-slate-300/50 dark:border-slate-700/50 glow-effect dark:glow-effect-dark">
+                <div class="rounded-xl bg-slate-900 text-slate-100 overflow-hidden shadow-2xl border border-slate-800">
+                    <!-- App Window Header Bar -->
+                    <div class="h-10 bg-slate-950/80 px-4 flex items-center justify-between border-b border-slate-800">
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+                            <div class="w-3 h-3 rounded-full bg-amber-500/80"></div>
+                            <div class="w-3 h-3 rounded-full bg-emerald-500/80"></div>
+                        </div>
+                        <div class="px-3 py-1 bg-slate-900 rounded-md text-[11px] font-mono text-slate-400 border border-slate-800">
+                            app.launchpad.io/dashboard
+                        </div>
+                        <div class="w-12"></div>
+                    </div>
+
+                    <!-- App Mockup Content -->
+                    <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-4 text-left font-sans">
+                        <!-- Stat Card 1 -->
+                        <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700/50">
+                            <div class="text-xs text-slate-400 font-medium">Total Revenue</div>
+                            <div class="text-2xl font-bold mt-1 text-white">$42,850.00</div>
+                            <div class="text-xs text-emerald-400 mt-2 flex items-center gap-1 font-medium">
+                                <i class="fa-solid fa-arrow-trend-up"></i> +18.4% from last month
+                            </div>
+                        </div>
+                        <!-- Stat Card 2 -->
+                        <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700/50">
+                            <div class="text-xs text-slate-400 font-medium">Active Subscribers</div>
+                            <div class="text-2xl font-bold mt-1 text-white">2,420</div>
+                            <div class="text-xs text-emerald-400 mt-2 flex items-center gap-1 font-medium">
+                                <i class="fa-solid fa-arrow-trend-up"></i> +12.1% active users
+                            </div>
+                        </div>
+                        <!-- Stat Card 3 -->
+                        <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700/50">
+                            <div class="text-xs text-slate-400 font-medium">Avg. Conversion Rate</div>
+                            <div class="text-2xl font-bold mt-1 text-white">4.85%</div>
+                            <div class="text-xs text-blue-400 mt-2 flex items-center gap-1 font-medium">
+                                <i class="fa-solid fa-minus"></i> Steady high benchmark
+                            </div>
+                        </div>
+
+                        <!-- Simulated Chart Preview Area -->
+                        <div class="md:col-span-3 mt-2 p-5 rounded-xl bg-slate-800/40 border border-slate-700/40">
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-xs font-semibold text-slate-300">Monthly Growth Metric</span>
+                                <span class="text-[11px] bg-blue-500/20 text-blue-300 px-2.5 py-0.5 rounded-full border border-blue-500/30">Live Sync</span>
+                            </div>
+                            <!-- SVG Bar Graph Visual -->
+                            <div class="h-32 w-full flex items-end justify-between gap-2 pt-4 px-2">
+                                <div class="w-full bg-slate-700/40 hover:bg-blue-600/50 transition-colors rounded-t h-[40%]"></div>
+                                <div class="w-full bg-slate-700/40 hover:bg-blue-600/50 transition-colors rounded-t h-[55%]"></div>
+                                <div class="w-full bg-slate-700/40 hover:bg-blue-600/50 transition-colors rounded-t h-[45%]"></div>
+                                <div class="w-full bg-slate-700/40 hover:bg-blue-600/50 transition-colors rounded-t h-[70%]"></div>
+                                <div class="w-full bg-slate-700/40 hover:bg-blue-600/50 transition-colors rounded-t h-[65%]"></div>
+                                <div class="w-full bg-blue-600/80 hover:bg-blue-500 transition-colors rounded-t h-[90%]"></div>
+                                <div class="w-full bg-indigo-500 hover:bg-indigo-400 transition-colors rounded-t h-[100%]"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Proof Section -->
+    <section class="py-10 border-y border-slate-200 dark:border-slate-800/80 bg-white/50 dark:bg-slate-900/40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-6">
+                Trusted by over 10,000+ ambitious founders and software teams
+            </p>
+            <div class="flex flex-wrap items-center justify-center gap-8 sm:gap-14 opacity-70 grayscale hover:grayscale-0 transition-all">
+                <div class="flex items-center gap-2 font-bold text-lg text-slate-700 dark:text-slate-300"><i class="fa-solid fa-bolt text-blue-500"></i> ApexLabs</div>
+                <div class="flex items-center gap-2 font-bold text-lg text-slate-700 dark:text-slate-300"><i class="fa-solid fa-cube text-purple-500"></i> HyperScale</div>
+                <div class="flex items-center gap-2 font-bold text-lg text-slate-700 dark:text-slate-300"><i class="fa-solid fa-fire text-amber-500"></i> NexusFlow</div>
+                <div class="flex items-center gap-2 font-bold text-lg text-slate-700 dark:text-slate-300"><i class="fa-solid fa-globe text-emerald-500"></i> OrbitHQ</div>
+                <div class="flex items-center gap-2 font-bold text-lg text-slate-700 dark:text-slate-300"><i class="fa-solid fa-layer-group text-indigo-500"></i> StackStack</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Grid Section -->
+    <section id="features" class="py-20 md:py-28">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-2">Built for Speed</h2>
+                <p class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">Everything you need to ship full-stack applications</p>
+                <p class="mt-4 text-slate-600 dark:text-slate-400 text-base sm:text-lg">Stop reinventing the wheel for authentication, payment setups, database schemas, and email routing.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="p-6 sm:p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 hover:border-blue-500/50 dark:hover:border-blue-500/50 shadow-sm hover:shadow-xl transition-all duration-300 group">
+                    <div class="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xl mb-5 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Turnkey Auth & Users</h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">OAuth providers, magic links, multi-factor authentication, and user roles pre-configured out of the box.</p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="p-6 sm:p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 hover:border-indigo-500/50 dark:hover:border-indigo-500/50 shadow-sm hover:shadow-xl transition-all duration-300 group">
+                    <div class="w-12 h-12 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xl mb-5 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-credit-card"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Automated Billing</h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">Stripe integration with multi-tier subscriptions, customer portals, invoice generation, and tax compliance.</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="p-6 sm:p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 hover:border-purple-500/50 dark:hover:border-purple-500/50 shadow-sm hover:shadow-xl transition-all duration-300 group">
+                    <div class="w-12 h-12 rounded-xl bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center text-xl mb-5 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Real-time Analytics</h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">Built-in privacy-first event tracking, user retention graphs, and revenue MRR dashboards.</p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="p-6 sm:p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 hover:border-emerald-500/50 dark:hover:border-emerald-500/50 shadow-sm hover:shadow-xl transition-all duration-300 group">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl mb-5 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-gauge-high"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Edge Infrastructure</h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">Global deployment ready with automatic sub-10ms response latency and smart caching worldwide.</p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="p-6 sm:p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 hover:border-amber-500/50 dark:hover:border-amber-500/50 shadow-sm hover:shadow-xl transition-all duration-300 group">
+                    <div class="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xl mb-5 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">AI Component Generator</h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">Generate bespoke UI elements, database ORM models, and server actions using simple text prompts.</p>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="p-6 sm:p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 hover:border-rose-500/50 dark:hover:border-rose-500/50 shadow-sm hover:shadow-xl transition-all duration-300 group">
+                    <div class="w-12 h-12 rounded-xl bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center text-xl mb-5 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Transactional Email</h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">Pre-designed responsive email templates for onboarding, password resets, and receipt notifications.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Interactive Demo Showcase Section -->
+    <section id="demo" class="py-20 bg-slate-100/70 dark:bg-slate-900/50 border-y border-slate-200 dark:border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <h2 class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-2">Interactive Showcase</h2>
+                <p class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">Explore the platform in action</p>
+                <p class="mt-3 text-slate-600 dark:text-slate-400">Select a feature below to test how intuitive Launchpad feels.</p>
+            </div>
+
+            <!-- Demo Tab Navigation -->
+            <div class="flex justify-center mb-8">
+                <div class="inline-flex p-1.5 rounded-2xl bg-slate-200 dark:bg-slate-800 gap-2">
+                    <button id="tab-analytics" onclick="switchDemoTab('analytics')" class="demo-tab-btn px-5 py-2.5 rounded-xl text-sm font-semibold transition-all bg-white dark:bg-slate-900 text-blue-600 dark:text-white shadow-sm">
+                        <i class="fa-solid fa-chart-pie mr-2"></i> Analytics Hub
+                    </button>
+                    <button id="tab-auth" onclick="switchDemoTab('auth')" class="demo-tab-btn px-5 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">
+                        <i class="fa-solid fa-user-lock mr-2"></i> User Auth
+                    </button>
+                    <button id="tab-database" onclick="switchDemoTab('database')" class="demo-tab-btn px-5 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">
+                        <i class="fa-solid fa-database mr-2"></i> DB & API Engine
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dynamic Tab Cards -->
+            <div id="demo-content" class="max-w-4xl mx-auto bg-white dark:bg-slate-950 p-6 sm:p-8 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl transition-all">
+                <!-- Analytics Content Panel -->
+                <div id="panel-analytics" class="demo-panel">
+                    <div class="flex flex-col md:flex-row items-center gap-8">
+                        <div class="w-full md:w-1/2 space-y-4">
+                            <span class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wide">Real-time Insights</span>
+                            <h3 class="text-2xl font-bold text-slate-900 dark:text-white">Track user engagement instantly</h3>
+                            <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                                Monitor live conversion funnels, churn velocity, and user retention metrics without adding heavy third-party tracking scripts.
+                            </p>
+                            <ul class="space-y-2 text-sm text-slate-600 dark:text-slate-300">
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-blue-500"></i> Zero-latency event pipeline</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-blue-500"></i> GDPR & HIPAA compliant</li>
+                            </ul>
+                        </div>
+                        <div class="w-full md:w-1/2 p-4 rounded-xl bg-slate-900 text-white font-mono text-xs space-y-3">
+                            <div class="text-slate-400 flex items-center justify-between border-b border-slate-800 pb-2">
+                                <span>analytics.track()</span>
+                                <span class="text-emerald-400">HTTP 200 OK</span>
+                            </div>
+                            <p class="text-blue-300">// Automated telemetry payload</p>
+                            <p class="text-slate-300">{</p>
+                            <p class="pl-4 text-amber-300">"event": <span class="text-emerald-300">"subscription_upgrade"</span>,</p>
+                            <p class="pl-4 text-amber-300">"plan": <span class="text-emerald-300">"Pro Tier"</span>,</p>
+                            <p class="pl-4 text-amber-300">"value": <span class="text-purple-300">79.00</span></p>
+                            <p class="text-slate-300">}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Auth Content Panel -->
+                <div id="panel-auth" class="demo-panel hidden">
+                    <div class="flex flex-col md:flex-row items-center gap-8">
+                        <div class="w-full md:w-1/2 space-y-4">
+                            <span class="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide">Enterprise Auth</span>
+                            <h3 class="text-2xl font-bold text-slate-900 dark:text-white">Seamless Single Sign-On</h3>
+                            <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                                Enable Google, GitHub, and SAML single sign-on with a single line of config. Automatic session refresh and token protection.
+                            </p>
+                            <ul class="space-y-2 text-sm text-slate-600 dark:text-slate-300">
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Multi-factor SMS & Authenticator</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Passwordless Magic Link support</li>
+                            </ul>
+                        </div>
+                        <div class="w-full md:w-1/2 p-6 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                            <div class="space-y-3">
+                                <button class="w-full py-2.5 px-4 rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white font-medium text-sm flex items-center justify-center gap-3">
+                                    <i class="fa-brands fa-google text-red-500"></i> Continue with Google
+                                </button>
+                                <button class="w-full py-2.5 px-4 rounded-xl bg-slate-900 dark:bg-slate-800 text-white font-medium text-sm flex items-center justify-center gap-3">
+                                    <i class="fa-brands fa-github"></i> Continue with GitHub
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Database Content Panel -->
+                <div id="panel-database" class="demo-panel hidden">
+                    <div class="flex flex-col md:flex-row items-center gap-8">
+                        <div class="w-full md:w-1/2 space-y-4">
+                            <span class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wide">ORM & Migration</span>
+                            <h3 class="text-2xl font-bold text-slate-900 dark:text-white">Instant GraphQL & REST APIs</h3>
+                            <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                                Define your schema using simple TypeScript types and auto-generate end-to-end type-safe API endpoints instantly.
+                            </p>
+                            <ul class="space-y-2 text-sm text-slate-600 dark:text-slate-300">
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-purple-500"></i> Auto-generated TypeScript types</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-purple-500"></i> Automatic database migrations</li>
+                            </ul>
+                        </div>
+                        <div class="w-full md:w-1/2 p-4 rounded-xl bg-slate-900 text-white font-mono text-xs space-y-2">
+                            <div class="text-purple-400">// schema.ts</div>
+                            <div><span class="text-blue-400">export const</span> User = db.schema({</div>
+                            <div class="pl-4 text-slate-300">id: <span class="text-amber-300">uuid()</span>.primaryKey(),</div>
+                            <div class="pl-4 text-slate-300">email: <span class="text-amber-300">string()</span>.unique(),</div>
+                            <div class="pl-4 text-slate-300">plan: <span class="text-amber-300">enum</span>([<span class="text-emerald-300">'free'</span>, <span class="text-emerald-300">'pro'</span>])</div>
+                            <div>});</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-20 md:py-28">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <h2 class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-2">Flexible Pricing</h2>
+                <p class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">Choose the right plan for your growth</p>
+                <p class="mt-4 text-slate-600 dark:text-slate-400">Scale seamlessly from side projects to enterprise scale.</p>
+
+                <!-- Billing Switcher Toggle -->
+                <div class="mt-8 flex items-center justify-center gap-4">
+                    <span id="label-monthly" class="text-sm font-semibold text-slate-900 dark:text-white">Monthly Billing</span>
+                    <button id="billing-toggle" onclick="toggleBilling()" aria-label="Toggle billing interval" class="relative w-14 h-8 rounded-full bg-blue-600 p-1 transition-colors focus:outline-none">
+                        <div id="toggle-dot" class="w-6 h-6 rounded-full bg-white transition-transform"></div>
+                    </button>
+                    <span id="label-yearly" class="text-sm font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+                        Yearly Billing
+                        <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300">Save 20%</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Pricing Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
+                <!-- Plan 1: Starter -->
+                <div class="rounded-2xl p-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex flex-col justify-between shadow-sm hover:shadow-lg transition-all">
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white">Starter</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Perfect for indie hackers and side projects.</p>
+                        <div class="mt-6 flex items-baseline gap-1">
+                            <span class="text-4xl font-extrabold text-slate-900 dark:text-white plan-price" data-monthly="$19" data-yearly="$15">$19</span>
+                            <span class="text-sm text-slate-500 dark:text-slate-400">/ month</span>
+                        </div>
+                        <ul class="mt-8 space-y-3.5 text-sm text-slate-600 dark:text-slate-300">
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-blue-500"></i> Up to 3 Active Projects</li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-blue-500"></i> 10,000 Monthly Active Users</li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-blue-500"></i> Standard Authentication</li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-blue-500"></i> Community Discord Support</li>
+                        </ul>
+                    </div>
+                    <a href="#signup" class="mt-8 w-full py-3 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-900 dark:text-white font-semibold text-sm text-center transition-colors">
+                        Start 14-Day Trial
+                    </a>
+                </div>
+
+                <!-- Plan 2: Pro (Highlighted) -->
+                <div class="relative rounded-2xl p-8 bg-slate-900 text-white border-2 border-blue-500 flex flex-col justify-between shadow-2xl glow-effect dark:glow-effect-dark">
+                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-blue-600 text-white shadow-md">
+                        Most Popular
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold">Pro Scale</h3>
+                        <p class="text-xs text-slate-400 mt-1">For growing startups and scaling teams.</p>
+                        <div class="mt-6 flex items-baseline gap-1">
+                            <span class="text-4xl font-extrabold text-white plan-price" data-monthly="$49" data-yearly="$39">$49</span>
+                            <span class="text-sm text-slate-400">/ month</span>
+                        </div>
+                        <ul class="mt-8 space-y-3.5 text-sm text-slate-300">
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-blue-400"></i> Unlimited Projects</li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-blue-400"></i> 100,000 Monthly Active Users</li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-blue-400"></i> Custom Domains & SSO</li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-blue-400"></i> Advanced Analytics & ORM</li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-blue-400"></i> Priority 24/7 Email Support</li>
+                        </ul>
+                    </div>
+                    <a href="#signup" class="mt-8 w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm text-center transition-colors shadow-lg shadow-blue-500/30">
+                        Get Started Now
+                    </a>
+                </div>
+
+                <!-- Plan 3: Enterprise -->
+                <div class="rounded-2xl p-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex flex-col justify-between shadow-sm hover:shadow-lg transition-all">
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white">Enterprise</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Custom security and dedicated architecture.</p>
+                        <div class="mt-6 flex items-baseline gap-1">
+                            <span class="text-4xl font-extrabold text-slate-900 dark:text-white plan-price" data-monthly="$199" data-yearly="$159">$199</span>
+                            <span class="text-sm text-slate-500 dark:text-slate-400">/ month</span>
+                        </div>
+                        <ul class="mt-8 space-y-3.5 text-sm text-slate-600 dark:text-slate-300">
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-blue-500"></i> Unlimited Active Users</li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-blue-500"></i> Dedicated Database Instance</li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-blue-500"></i> 99.99% Uptime SLA</li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-check text-blue-500"></i> Dedicated Solutions Architect</li>
+                        </ul>
+                    </div>
+                    <a href="#signup" class="mt-8 w-full py-3 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-900 dark:text-white font-semibold text-sm text-center transition-colors">
+                        Contact Sales
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="py-20 bg-slate-100/60 dark:bg-slate-900/40 border-t border-slate-200 dark:border-slate-800">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-14">
+                <h2 class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-2">Got Questions?</h2>
+                <p class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Frequently Asked Questions</p>
+            </div>
+
+            <div class="space-y-4">
+                <!-- FAQ Item 1 -->
+                <div class="faq-item rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 overflow-hidden transition-all">
+                    <button onclick="toggleFaq(this)" class="w-full p-6 text-left font-semibold text-slate-900 dark:text-white flex items-center justify-between gap-4">
+                        <span>How long does it take to integrate Launchpad into an existing app?</span>
+                        <i class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-answer hidden px-6 pb-6 text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                        Most development teams integrate Launchpad in under 20 minutes. We provide standard NPM packages and boilerplates for Next.js, React, Vue, Svelte, and Node.js.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 2 -->
+                <div class="faq-item rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 overflow-hidden transition-all">
+                    <button onclick="toggleFaq(this)" class="w-full p-6 text-left font-semibold text-slate-900 dark:text-white flex items-center justify-between gap-4">
+                        <span>Can I export my data or self-host if needed?</span>
+                        <i class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-answer hidden px-6 pb-6 text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                        Yes! Launchpad strictly avoids vendor lock-in. You retain 100% ownership of your PostgreSQL schemas and user records. Data can be exported at any time via automated JSON/SQL dumps.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 3 -->
+                <div class="faq-item rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 overflow-hidden transition-all">
+                    <button onclick="toggleFaq(this)" class="w-full p-6 text-left font-semibold text-slate-900 dark:text-white flex items-center justify-between gap-4">
+                        <span>What happens after my 14-day free trial ends?</span>
+                        <i class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-answer hidden px-6 pb-6 text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                        You can continue testing on our free sandbox tier with up to 1,000 monthly active users. You won't be charged unless you explicitly upgrade to a paid plan.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 4 -->
+                <div class="faq-item rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 overflow-hidden transition-all">
+                    <button onclick="toggleFaq(this)" class="w-full p-6 text-left font-semibold text-slate-900 dark:text-white flex items-center justify-between gap-4">
+                        <span>Do you support custom domain configurations?</span>
+                        <i class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-answer hidden px-6 pb-6 text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                        Yes, Pro and Enterprise tiers allow complete white-label custom domain mapping with automated SSL cert issuance via Let's Encrypt.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Call to Action Banner Section -->
+    <section class="py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="relative rounded-3xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-700 p-8 sm:p-14 text-center text-white overflow-hidden shadow-2xl">
+                <!-- Decorative Circles -->
+                <div class="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-white/10 blur-xl"></div>
+                <div class="absolute -bottom-12 -left-12 w-48 h-48 rounded-full bg-white/10 blur-xl"></div>
+
+                <div class="relative z-10 max-w-2xl mx-auto space-y-6">
+                    <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight">Ready to launch your product?</h2>
+                    <p class="text-blue-100 text-base sm:text-lg">
+                        Join thousands of developers shipping faster today. Setup takes under 5 minutes.
+                    </p>
+                    <div class="pt-2 flex flex-col sm:flex-row gap-3 justify-center">
+                        <a href="#signup" class="px-8 py-3.5 rounded-xl bg-white text-blue-600 font-bold text-sm hover:bg-slate-100 transition-colors shadow-lg">
+                            Start Free Trial
+                        </a>
+                        <a href="#demo" class="px-8 py-3.5 rounded-xl bg-blue-700/50 hover:bg-blue-700/70 text-white font-semibold text-sm border border-white/20 transition-colors">
+                            Schedule Live Demo
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 pt-16 pb-12 transition-colors">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-8 pb-12 border-b border-slate-200 dark:border-slate-800">
+                <!-- Column 1: Brand Info -->
+                <div class="col-span-2 space-y-4">
+                    <a href="#" class="flex items-center gap-2 font-bold text-xl tracking-tight">
+                        <div class="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md">
+                            <i class="fa-solid fa-rocket text-sm"></i>
+                        </div>
+                        <span class="text-slate-900 dark:text-white">Launchpad</span>
+                    </a>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
+                        The all-in-one SaaS boiler-kit that empowers creators to ship resilient products in record time.
+                    </p>
+                    <div class="flex items-center gap-4 text-slate-400">
+                        <a href="#" aria-label="Twitter" class="hover:text-blue-500 transition-colors"><i class="fa-brands fa-x-twitter"></i></a>
+                        <a href="#" aria-label="GitHub" class="hover:text-slate-900 dark:hover:text-white transition-colors"><i class="fa-brands fa-github"></i></a>
+                        <a href="#" aria-label="Discord" class="hover:text-indigo-500 transition-colors"><i class="fa-brands fa-discord"></i></a>
+                    </div>
+                </div>
+
+                <!-- Column 2: Product -->
+                <div>
+                    <h4 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-4">Product</h4>
+                    <ul class="space-y-2.5 text-xs text-slate-600 dark:text-slate-400">
+                        <li><a href="#features" class="hover:text-blue-600 dark:hover:text-white transition-colors">Features</a></li>
+                        <li><a href="#demo" class="hover:text-blue-600 dark:hover:text-white transition-colors">Integrations</a></li>
+                        <li><a href="#pricing" class="hover:text-blue-600 dark:hover:text-white transition-colors">Pricing Tier</a></li>
+                        <li><a href="#" class="hover:text-blue-600 dark:hover:text-white transition-colors">Changelog</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 3: Resources -->
+                <div>
+                    <h4 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-4">Resources</h4>
+                    <ul class="space-y-2.5 text-xs text-slate-600 dark:text-slate-400">
+                        <li><a href="#" class="hover:text-blue-600 dark:hover:text-white transition-colors">Documentation</a></li>
+                        <li><a href="#" class="hover:text-blue-600 dark:hover:text-white transition-colors">API Reference</a></li>
+                        <li><a href="#" class="hover:text-blue-600 dark:hover:text-white transition-colors">Community Forum</a></li>
+                        <li><a href="#" class="hover:text-blue-600 dark:hover:text-white transition-colors">Status Page</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 4: Company -->
+                <div>
+                    <h4 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-4">Company</h4>
+                    <ul class="space-y-2.5 text-xs text-slate-600 dark:text-slate-400">
+                        <li><a href="#" class="hover:text-blue-600 dark:hover:text-white transition-colors">About Us</a></li>
+                        <li><a href="#" class="hover:text-blue-600 dark:hover:text-white transition-colors">Careers</a></li>
+                        <li><a href="#" class="hover:text-blue-600 dark:hover:text-white transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-blue-600 dark:hover:text-white transition-colors">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Bottom Copyright -->
+            <div class="mt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 dark:text-slate-400 gap-4">
+                <p>&copy; <span id="year">2026</span> Launchpad Technologies Inc. All rights reserved.</p>
+                <div class="flex gap-6">
+                    <a href="#" class="hover:underline">Privacy</a>
+                    <a href="#" class="hover:underline">Terms</a>
+                    <a href="#" class="hover:underline">Cookies</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Interactive Logic Script -->
+    <script>
+        // Set dynamic copyright year
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // 1. Dark Mode Toggle Logic
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const darkIcon = document.getElementById('theme-toggle-dark-icon');
+        const lightIcon = document.getElementById('theme-toggle-light-icon');
+
+        function initTheme() {
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+                lightIcon.classList.remove('hidden');
+                darkIcon.classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                darkIcon.classList.remove('hidden');
+                lightIcon.classList.add('hidden');
+            }
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+                darkIcon.classList.remove('hidden');
+                lightIcon.classList.add('hidden');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                lightIcon.classList.remove('hidden');
+                darkIcon.classList.add('hidden');
+            }
+        });
+
+        initTheme();
+
+        // 2. Mobile Navigation Toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // 3. Email Form Toast Notification Demo
+        const heroForm = document.getElementById('hero-email-form');
+        const toast = document.getElementById('toast');
+        const toastMsg = document.getElementById('toast-message');
+
+        heroForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const emailInput = heroForm.querySelector('input[type="email"]');
+            
+            showToast(`Welcome aboard! Demo account created for ${emailInput.value}`);
+            emailInput.value = '';
+        });
+
+        function showToast(message) {
+            toastMsg.textContent = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 4000);
+        }
+
+        // 4. Product Demo Interactive Tabs Switcher
+        function switchDemoTab(tabName) {
+            // Update Tab Button Styles
+            document.querySelectorAll('.demo-tab-btn').forEach(btn => {
+                btn.classList.remove('bg-white', 'dark:bg-slate-900', 'text-blue-600', 'dark:text-white', 'shadow-sm');
+                btn.classList.add('text-slate-600', 'dark:text-slate-400');
+            });
+
+            const activeBtn = document.getElementById(`tab-${tabName}`);
+            if (activeBtn) {
+                activeBtn.classList.add('bg-white', 'dark:bg-slate-900', 'text-blue-600', 'dark:text-white', 'shadow-sm');
+                activeBtn.classList.remove('text-slate-600', 'dark:text-slate-400');
+            }
+
+            // Hide all panels & show active panel
+            document.querySelectorAll('.demo-panel').forEach(panel => {
+                panel.classList.add('hidden');
+            });
+
+            const activePanel = document.getElementById(`panel-${tabName}`);
+            if (activePanel) {
+                activePanel.classList.remove('hidden');
+            }
+        }
+
+        // 5. Pricing Monthly / Yearly Switcher
+        let isYearly = false;
+        function toggleBilling() {
+            isYearly = !isYearly;
+            const toggleDot = document.getElementById('toggle-dot');
+            const prices = document.querySelectorAll('.plan-price');
+            const labelMonthly = document.getElementById('label-monthly');
+            const labelYearly = document.getElementById('label-yearly');
+
+            if (isYearly) {
+                toggleDot.classList.add('translate-x-6');
+                labelMonthly.classList.replace('text-slate-900', 'text-slate-500');
+                labelMonthly.classList.replace('dark:text-white', 'dark:text-slate-400');
+                labelYearly.classList.replace('text-slate-500', 'text-slate-900');
+                labelYearly.classList.replace('dark:text-slate-400', 'dark:text-white');
+
+                prices.forEach(p => {
+                    p.textContent = p.getAttribute('data-yearly');
+                });
+            } else {
+                toggleDot.classList.remove('translate-x-6');
+                labelYearly.classList.replace('text-slate-900', 'text-slate-500');
+                labelYearly.classList.replace('dark:text-white', 'dark:text-slate-400');
+                labelMonthly.classList.replace('text-slate-500', 'text-slate-900');
+                labelMonthly.classList.replace('dark:text-slate-400', 'dark:text-white');
+
+                prices.forEach(p => {
+                    p.textContent = p.getAttribute('data-monthly');
+                });
+            }
+        }
+
+        // 6. Interactive FAQ Accordion
+        function toggleFaq(button) {
+            const faqAnswer = button.nextElementSibling;
+            const icon = button.querySelector('i');
+
+            if (faqAnswer.classList.contains('hidden')) {
+                faqAnswer.classList.remove('hidden');
+                icon.classList.add('rotate-180');
+            } else {
+                faqAnswer.classList.add('hidden');
+                icon.classList.remove('rotate-180');
+            }
+        }
+    </script>
+</body>
+</html>
